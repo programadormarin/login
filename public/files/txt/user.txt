@@ -1,1 +1,2 @@
-1;junior;senha;admin
+2;hermenegildo;29b120055e01eb6f98ffa0e75e4f9bb9;comum
+3;junior;3236139f11aecab541ef95baa2062bc2;admin

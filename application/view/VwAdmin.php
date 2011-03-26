@@ -1,53 +1,28 @@
 <?php
 namespace login\application\view {
 	require_once _PATH_VIEW_ . 'View.php';
-	class VwLogin extends View {
-		public static function login($except = null) {
-			if ($except):
-?>
-<div id="excecao">
-	<p><?php echo $except; ?></p>
-</div>
-<?php endif; ?>
-<div id="form">
-	<form action="?action=login" method="post">
-		<p>
-			Usuario:<br /><input type="text" name="login" class="text">
-		</p>
-		<p>
-			Senha:<br /><input type="password" name="password" class="text">
-		</p>
-		<input type="submit" name="entrar" value="Entrar">
-	</form>
-	<a href="?action=cadastro" title="Cadastre-se">Para cadastrar-se, clique aqui!</a>
-</div>
-<?php 
-		} 
+	class VwAdmin extends View {
 		
-		public static function capaAdmin($users, $usuario, $acessos) {
+		public static function capa($users, $usuario, $acessos, $msg = null) {
+			self::header();
 ?>
 <div id="conteudo">
 	<a href="?action=sair" id="sair">Sair</a>
 	<h1 align="center">&Aacute;rea do Administrador</h1>
-	<div>
-		<table cellpadding="2" cellspacing="0" align="center" border="0" id="usuarios" width="300">		
-			<tr bgcolor="#dadada">
-				<td width="20%" align="center">
-					<h3 align="center">Meu Cadastro</h3>
-					<form action="admin?action=alterar" method="post">
-						<p>
-							Usuario:<br />
-							<input type="text" name="login" value="<?php echo $usuario->getLogin(); ?>">
-						</p>
-						<p>
-							Senha:<br />
-							<input type="password" name="password" value="<?php echo $usuario->getPassword(); ?>">
-						</p>
-						<input type="submit" name="alterar" value="Alterar">
-					</form>
-				</td>
-			</tr>
-		</table>
+	<div id="login">
+		<h3 align="center">Meu Cadastro</h3>
+		<?php if ($msg) echo "<p>$msg</p>"?>
+		<form action="admin?action=capa" method="post">
+			<p>
+				Usuario:<br />
+				<input type="text" name="login" value="<?php echo $usuario->getLogin(); ?>">
+			</p>
+			<p>
+				Senha:<br />
+				<input type="password" name="password"> <small>Preencha para alterar a senha.</small>
+			</p>
+			<input type="submit" name="alterar" value="Alterar">
+		</form>
 	</div>
 	<div>
 		<h3 align="center">Usu&aacute;rios Cadastrados</h3>
@@ -140,18 +115,11 @@ namespace login\application\view {
 	</div>
 </div>
 <?php 
+			self::footer();
 		}
 		
-		public static function capaUsuarioComum() {
-?>
-<div id="conteudo">
-	<h1>&Aacute;rea do Usu&aacute;rio</h1>
-	
-</div>
-<?php 
-		}
-		
-		public static function cadastro($except) {
+		public static function adicionar($except = null) {
+			self::header();
 			if ($except):
 ?>
 <div id="excecao">
@@ -159,18 +127,150 @@ namespace login\application\view {
 </div>
 <?php endif; ?>
 <div id="form">
-	<form action="?action=login" method="post">
+	<h3>Cadastrar novo usu&aacute;rio</h3>
+	<form action="?action=adicionar" method="post">
 		<p>
 			Usuario:<br /><input type="text" name="login" class="text">
 		</p>
 		<p>
 			Senha:<br /><input type="password" name="password" class="text">
 		</p>
-		<input type="submit" name="entrar" value="Entrar">
+		<p>
+			Tipo:<br />
+			<select name="type">
+				<option value="admin">Administrador</option>
+				<option value="comum">Usu&aacute;rio Comum</option>
+			</select>
+		</p>
+		<input type="submit" name="cadastrar" value="Cadastrar">
 	</form>
-	<a href="?action=login" title="Cadastre-se">Voltar ao login.</a>
+	<a href="?action=login" title="Voltar a capa">Voltar a capa.</a>
 </div>
 <?php 
+			self::footer();
+		}
+		
+		public static function detalhar($user, $acessos) {
+			self::header();
+?>
+<div id="form">
+	<p><a href="?action=capa" title="Voltar a capa">Voltar a capa.</a></p>
+	<h3>Informa&ccedil;&otilde;es do usuario</h3>
+	<p>
+		Usuario: <?php echo $user->getLogin(); ?>
+	</p>
+	<p>
+		Tipo: 
+		<?php 
+			if ($user->getType() === 'admin')
+				echo 'Administrador';
+			else  echo 'Usu&aacute;rio comum';
+		?>
+	</p>
+</div>
+<div class="table">
+	<h3 align="center">Hist&oacute;rico de Acessos</h3>
+	<table cellpadding="2" cellspacing="0" align="center" border="0" id="usuarios" width="300">		
+		<tr bgcolor="#dadada">
+			<td width="20%" align="center">
+				<strong>Id</strong>
+			</td>
+			<td align="center">
+				<strong>Tipo</strong>
+			</td>
+			<td width="60%" align="center">
+				<strong>Data/hora</strong>
+			</td>
+		</tr>
+		<?php 
+			foreach ($acessos as $acesso) {
+				$dataHora = explode(' ', $acesso->getDateHour());
+				$data = explode('-', $dataHora[0]);
+				$data = $data[2] . '/' . $data[1] . '/' . $data[0];
+				$hora = $dataHora[1];
+				$dataHora = $data . ' as ' . $hora;
+		?>
+		<tr>
+			<td align="center">
+				<?php echo $acesso->getId();?>
+			</td>
+			<td align="center">
+				<?php echo $acesso->getType();?>
+			</td>
+			<td align="center">
+				<?php echo $dataHora;?>
+			</td>
+		</tr>
+		<?php 
+			} 
+		?>
+	</table>
+	<p><a href="?action=capa" title="Voltar a capa">Voltar a capa.</a></p>
+</div>
+<?php 
+			self::footer();
+		}
+	
+		public static function alterar($user, $except = null) {
+			self::header();
+			if ($except):
+?>
+<div id="excecao">
+	<p><?php echo $except; ?></p>
+</div>
+<?php endif; ?>
+<div id="form">
+	<h3>Alterar cadastro de usuario</h3>
+	<form action="admin?action=alterar" method="post">
+		<input type="hidden" name="id" value="<?php echo $user->getId();?>">
+		<p>
+			Usuario:<br /><input type="text" name="login" class="text" value="<?php echo $user->getLogin();?>">
+		</p>
+		<p>
+			Senha:<br /><input type="password" name="password" class="text"><small>Preencha para alterar a senha.</small>
+		</p>
+		<p>
+			Tipo:<br />
+			<select name="type">
+				<?php if ($user->getType() === 'admin'): ?>
+					<option value="admin" selected="selected">Administrador</option>
+					<option value="comum">Usu&aacute;rio Comum</option>
+				<?php endif;?>
+				<?php if ($user->getType() === 'comum'): ?>
+					<option value="admin">Administrador</option>
+					<option value="comum" selected="selected">Usu&aacute;rio Comum</option>
+				<?php endif;?>
+			</select>
+		</p>
+		<input type="submit" name="entrar" value="Alterar">
+	</form>
+	<a href="?action=capa" title="Voltar a capa">Voltar a capa.</a>
+</div>
+<?php 
+			self::footer();
+		}
+		
+		public static function excluir($user, $except = null) {
+			self::header();
+			if ($except):
+?>
+<div id="excecao">
+	<p><?php echo $except; ?></p>
+</div>
+<?php endif; ?>
+<div id="form">
+	<h3>Exclus&atiolde;o de usuario</h3>
+	<p>Confirme a exclus&atilde;o do usuario '<?php echo $user->getLogin(); ?>' abaixo:
+	<form action="admin?action=excluir" method="post">
+		<input type="hidden" name="id" value="<?php echo $user->getId(); ?>">
+		<p>
+			<input type="submit" name="excluir" value="Excluir">
+			<input type="submit" name="cancelar" value="Cancelar">
+		</p>
+	</form>
+</div>
+<?php 
+			self::footer();
 		}
 	}
 }

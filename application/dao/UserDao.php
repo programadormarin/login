@@ -4,6 +4,7 @@ namespace login\application\dao {
 	require_once  _PATH_DAO_ . 'Dao.php';
 	use login\application\entities\User;
 	use PDO;
+	use Exception;
 	class UserDao extends Dao {
 		/**
 		 * Cadastra um novo usuario(user)
@@ -11,10 +12,11 @@ namespace login\application\dao {
 		 * @param User $user Usuario a ser cadastrado
 		 */
 		public function addUpdate (User $user) {
-			if ($this->load($user->getLogin())) 
-				throw new Exception('Login de usu&aacute;rio j&aacute; existente!');
-			if ($user->getId() == null) $sql = 'INSERT INTO user (login, password, type) VALUES(?, ?, ?)';
-			else $sql = 'UPDATE user SET login = ?, password = ?, type = ? WHERE id = ' . $user->getId();
+			if ($user->getId() == null)  {
+				if ($this->load($user->getLogin()))
+					throw new Exception('Login de usu&aacute;rio j&aacute; existente!');
+				$sql = 'INSERT INTO user (login, password, type) VALUES(?, ?, ?)';
+			} else $sql = 'UPDATE user SET login=?, password=?, type=? WHERE id = ' . $user->getId();
 			$statement = $this->conn->prepare($sql);
 			$statement->bindParam(1, $user->getLogin(), PDO::PARAM_STR);
 			$statement->bindParam(2, $user->getPassword(), PDO::PARAM_STR);
@@ -32,9 +34,9 @@ namespace login\application\dao {
 		public function remove (User $user) {
 			if (!$this->load($user->getId())) 
 				throw new Exception('Usuario existente!');
-			$sql = 'DELETE FROM setor WHERE id = ? ORDER BY id LIMIT 1';
+			$sql = 'DELETE FROM user WHERE id = ? ORDER BY id LIMIT 1';
 			$statement = $this->conn->prepare($sql);
-			$statement->bindParam(1, $user->getId(), PDO::PARAM_STR);
+			$statement->bindParam(1, $user->getId(), PDO::PARAM_INT);
 			if ($statement->execute()) {
 				return true;
 			} else throw new Exception('Problemas ao remover usu&aacute;rio!');

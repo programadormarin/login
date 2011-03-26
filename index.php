@@ -1,6 +1,8 @@
 <?php
 namespace login;
 
+use login\application\ctrl\Admin;
+
 use login\application\ctrl\Login;
 
 ob_start();
@@ -17,10 +19,6 @@ if ($request === 'admin') {
 	require _PATH_CTRL_ . 'Admin.php';
 	$a = new Admin();
 	$a->exec();
-} else if ($request === 'usuario') {
-	require _PATH_CTRL_ . 'Usuario.php';
-	$u = new Usuario;
-	$u->exec();
 } else {
 	require_once _PATH_CTRL_ . 'Login.php';
 	$l = new Login();

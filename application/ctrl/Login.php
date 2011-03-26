@@ -43,45 +43,47 @@ namespace login\application\ctrl {
 					$this->capaUsuarioComum();
 				break;
 				case 'sair':
-					session_start();
-					$this->user = $_SESSION['user'];
-					$this->access->setType('login');
-					$this->access->setUser($this->user);
-					$this->accessDao->addUpdate($this->access);
-					unset($_SESSION['user']);
-					session_destroy();
-					header('location:?action=login');
-					ob_end_flush();
+					$this->sair();
 				break;
 			} 
 		}
 
 ///////////////////////////////Metodos Auxiliares///////////////////////////////////
 		
+		private function sair () {
+			session_start();
+			$this->user = $_SESSION['user'];
+			$this->access->setType('login');
+			$this->access->setUser($this->user);
+			$this->accessDao->addUpdate($this->access);
+			unset($_SESSION['user']);
+			session_destroy();
+			header('location:?action=login');
+			ob_end_flush();
+		}
+		
 		private function login () {
 			if ($_POST) {
 				$login = $_POST['login'];
 				$password = md5($_POST['password'] . 'sistema de login');
 				$this->user = $this->userDao->load($login);
-				if ($this->user->getPassword() === $password) {
-					session_start();
-					$_SESSION['user'] =  $this->user;
-					$this->access->setType('login');
-					$this->access->setUser($this->user);
-					$this->accessDao->addUpdate($this->access);
-					if ($this->user->getType() === 'admin') {
-						ob_clean();
-						header('location:admin?action=capaAdmin');
-						ob_end_flush();
-					} else {
-						header('location:login?action=capaUsuarioComum');
-					}
-				} else {
-					VwLogin::login('Login ou senha incorretos ou n&atilde;o cadastrados! ');
-				}
-				return;
-			}
-			VwLogin::login();
+				if ($this->user) {
+					if ($this->user->getPassword() === $password) {
+						session_start();
+						$_SESSION['user'] =  $this->user;
+						$this->access->setType('login');
+						$this->access->setUser($this->user);
+						$this->accessDao->addUpdate($this->access);
+						if ($this->user->getType() === 'admin') {
+							ob_clean();
+							header('location:admin?action=capa');
+							ob_end_flush();
+						} else {
+							header('location:login?action=capaUsuarioComum');
+						}
+					} else VwLogin::login('Login ou senha incorretos ou n&atilde;o cadastrados!');
+				} else VwLogin::login('Login ou senha incorretos ou n&atilde;o cadastrados!');
+			} else VwLogin::login();
 		}
 		
 		private function cadastro () {
@@ -91,8 +93,18 @@ namespace login\application\ctrl {
 		private function capaUsuarioComum () {
 			session_start();
 			$user = $_SESSION['user'];
+			if ($_POST) {
+				$this->user->setId($user->getId());
+				$this->user->setType($user->getType());
+				$user->setLogin($_POST['login']);
+				if (isset($_POST['password']) && $_POST['password'] != '')
+					$user->setPassword(md5($_POST['password'] . 'sistema de login'));
+				else $this->user->setPassword($user->getPassword());
+				$this->userDao->addUpdate($user);  
+			}
 			if ($user->getType() === 'comum') {
-				VwLogin::capaUsuarioComum();
+				$this->access = $this->accessDao->load($user);
+				VwLogin::capaUsuarioComum($user, $this->access);
 			} else header('lcation:login?action=login');
 		}
 	}
