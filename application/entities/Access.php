@@ -28,7 +28,7 @@ namespace login\application\entities {
 		 * Atribui a hora e data do acesso
 		 * @param DatetTime $newTimeDate Eh o momento do acesso de login ou logout
 		 */
-		public function setDateHour (DateTime $newDateHour) {
+		public function setDateHour ($newDateHour) {
 			$this->dateHour = $newDateHour;
 		}
 		

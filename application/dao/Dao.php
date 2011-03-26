@@ -82,7 +82,7 @@ namespace login\application\dao {
 			$arquivo .= '<accesses>';
 			if ($acessos) {
 				foreach ($acessos as $acesso) {
-					$arquivo .= '<setor id="' . $acesso['id'] . '" type="' . $acesso['type'] . '" datehour="' . $acesso['datehour'] . '" user="' . $acesso['user'] . '" />';
+					$arquivo .= '<setor id="' . $acesso['id'] . '" type="' . $acesso['type'] . '" datehour="' . $acesso['datehour'] . '" user_id="' . $acesso['user_id'] . '" />';
 				}
 			}
 			$arquivo .= '</accesses>';

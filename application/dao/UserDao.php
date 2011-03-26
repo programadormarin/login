@@ -10,10 +10,11 @@ namespace login\application\dao {
 		 * @return boolean false ou User
 		 * @param User $user Usuario a ser cadastrado
 		 */
-		public function add (User $user) {
+		public function addUpdate (User $user) {
 			if ($this->load($user->getLogin())) 
 				throw new Exception('Login de usu&aacute;rio j&aacute; existente!');
-			$sql = 'INSERT INTO user (login, password, type) VALUES(?, ?, ?)';
+			if ($user->getId() == null) $sql = 'INSERT INTO user (login, password, type) VALUES(?, ?, ?)';
+			else $sql = 'UPDATE user SET login = ?, password = ?, type = ? WHERE id = ' . $user->getId();
 			$statement = $this->conn->prepare($sql);
 			$statement->bindParam(1, $user->getLogin(), PDO::PARAM_STR);
 			$statement->bindParam(2, $user->getPassword(), PDO::PARAM_STR);
@@ -35,7 +36,7 @@ namespace login\application\dao {
 			$statement = $this->conn->prepare($sql);
 			$statement->bindParam(1, $user->getId(), PDO::PARAM_STR);
 			if ($statement->execute()) {
-				return $this->load($user->getLogin());
+				return true;
 			} else throw new Exception('Problemas ao remover usu&aacute;rio!');
 		}
 		

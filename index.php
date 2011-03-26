@@ -1,26 +1,28 @@
 <?php
 namespace login;
-use login\application\entities\User;
-use login\application\dao\UserDao;
+
+use login\application\ctrl\Login;
+
+ob_start();
 
 define('_PATH_RAIZ_', '');
-require_once _PATH_RAIZ_ . 'path.php';
+require _PATH_RAIZ_ . 'path.php';
 
-//require_once _PATH_DAO_ . 'UserDao.php';
-//require_once _PATH_ENTITIES_ . 'User.php';
-////$pdo = new PDO('mysql:host=localhost;dbname=login', 'root', '');
-//$user = new User();
-//$user->setLogin('junior');
-//$user->setPassword('senha');
-//$user->setType('admin');
-//
-//$daoUser = new UserDao();
-//
-//$u = $daoUser->load();
-//var_dump('<pre>', $u);
+$request = explode('/', $_SERVER['REQUEST_URI']);
+$request = $request[count($request) - 1];
+$request = explode('?', $request);
+$request = $request[0];
 
-require_once _PATH_DAO_ . 'AccessDao.php';
-require_once _PATH_ENTITIES_ . 'Access.php';
-
-$access = new Access();
-$access->load();
+if ($request === 'admin') {
+	require _PATH_CTRL_ . 'Admin.php';
+	$a = new Admin();
+	$a->exec();
+} else if ($request === 'usuario') {
+	require _PATH_CTRL_ . 'Usuario.php';
+	$u = new Usuario;
+	$u->exec();
+} else {
+	require_once _PATH_CTRL_ . 'Login.php';
+	$l = new Login();
+	$l->exec();
+}
