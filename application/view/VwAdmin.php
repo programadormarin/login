@@ -259,8 +259,8 @@ namespace login\application\view {
 </div>
 <?php endif; ?>
 <div id="form">
-	<h3>Exclus&atiolde;o de usuario</h3>
-	<p>Confirme a exclus&atilde;o do usuario '<?php echo $user->getLogin(); ?>' abaixo:
+	<h3>Exclus&atilde;o de usuario</h3>
+	<p>Confirme a exclus&atilde;o do usuario '<?php echo $user->getLogin(); ?>' abaixo:</p>
 	<form action="admin?action=excluir" method="post">
 		<input type="hidden" name="id" value="<?php echo $user->getId(); ?>">
 		<p>

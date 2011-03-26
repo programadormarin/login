@@ -73,7 +73,7 @@ namespace login\application\dao {
 			}
 			$arquivo .= '</users>';
 			$escrevendoXml = fwrite($xmlUsuario, $arquivo);
-			fclose($xmlUsuario);
+			$xml = fclose($xmlUsuario);
 			
 			$xmlAcesso = fopen($pathXml . 'access.xml', 'w');
 			$querySetores = 'SELECT * FROM access ORDER BY id';
@@ -87,7 +87,7 @@ namespace login\application\dao {
 			}
 			$arquivo .= '</accesses>';
 			$escrevendoXml = fwrite($xmlAcesso, $arquivo);
-			fclose($xmlAcesso);
+			$xml = fclose($xmlAcesso);
 		}
 	}
 }
