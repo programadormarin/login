@@ -68,7 +68,7 @@ namespace login\application\dao {
 			$arquivo .= '<users>';
 			if ($usuarios) {
 				foreach ($usuarios as $usuario) {
-					$arquivo .= '<setor id="' . $usuario['id'] . '" login="' . utf8_encode($usuario['login']) . '" password="' . $usuario['password'] . '" type="' . $usuario['type'] . '" />';
+					$arquivo .= '<user id="' . $usuario['id'] . '" login="' . utf8_encode($usuario['login']) . '" password="' . $usuario['password'] . '" type="' . $usuario['type'] . '" />';
 				}
 			}
 			$arquivo .= '</users>';
@@ -82,7 +82,7 @@ namespace login\application\dao {
 			$arquivo .= '<accesses>';
 			if ($acessos) {
 				foreach ($acessos as $acesso) {
-					$arquivo .= '<setor id="' . $acesso['id'] . '" type="' . $acesso['type'] . '" datehour="' . $acesso['datehour'] . '" user_id="' . $acesso['user_id'] . '" />';
+					$arquivo .= '<access id="' . $acesso['id'] . '" type="' . $acesso['type'] . '" datehour="' . $acesso['datehour'] . '" user_id="' . $acesso['user_id'] . '" />';
 				}
 			}
 			$arquivo .= '</accesses>';
