@@ -18,9 +18,9 @@ namespace login\application\dao {
 				$sql = 'INSERT INTO user (login, password, type) VALUES(?, ?, ?)';
 			} else $sql = 'UPDATE user SET login=?, password=?, type=? WHERE id = ' . $user->getId();
 			$statement = $this->conn->prepare($sql);
-			$statement->bindParam(1, $user->getLogin(), PDO::PARAM_STR);
-			$statement->bindParam(2, $user->getPassword(), PDO::PARAM_STR);
-			$statement->bindParam(3, $user->getType(), PDO::PARAM_STR);
+			$statement->bindValue(1, $user->getLogin());
+			$statement->bindValue(2, $user->getPassword());
+			$statement->bindValue(3, $user->getType());
 			if ($statement->execute()) {
 				return $this->load($user->getLogin());
 			} else throw new Exception('Problemas ao cadastrar novo usu&aacute;rio!');
